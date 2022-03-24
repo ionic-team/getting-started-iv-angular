@@ -76,7 +76,7 @@ export class VaultService {
     this.state.canUseBiometrics =
       Capacitor.getPlatform() === "web"
         ? false
-        : await Device.isBiometricsEnabled();
+        : await Device.isSystemPasscodeSet();
     this.state.canUsePasscode =
       Capacitor.getPlatform() === "web"
         ? false
@@ -115,7 +115,7 @@ export class VaultService {
     switch (this.state.lockType) {
       case "Biometrics":
         type = VaultType.DeviceSecurity;
-        deviceSecurityType = DeviceSecurityType.Biometrics;
+        deviceSecurityType = DeviceSecurityType.Both;
         break;
 
       case "SystemPasscode":
