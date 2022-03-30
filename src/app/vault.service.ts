@@ -24,9 +24,11 @@ const key = 'sessionData';
 export interface VaultServiceState {
   session: string;
   isLocked: boolean;
+  dimBiometrics: boolean;
   privacyScreen: boolean;
-  lockType: 'NoLocking' | 'Biometrics' | 'SystemPasscode';
+  lockType: 'NoLocking' | 'Biometrics' | 'SystemPasscode' | 'Both';
   canUseBiometrics: boolean;
+  canUseDimBiometrics: boolean;
   canUsePasscode: boolean;
   isEmpty: boolean;
 }
@@ -36,9 +38,11 @@ export class VaultService {
   public state: VaultServiceState = {
     session: '',
     isLocked: false,
+    dimBiometrics: false,
     privacyScreen: false,
     lockType: 'NoLocking',
     canUseBiometrics: false,
+    canUseDimBiometrics: false,
     canUsePasscode: false,
     isEmpty: true,
   };
@@ -50,6 +54,10 @@ export class VaultService {
   async init() {
     await this.platform.ready(); // This is required only for Cordova
     this.vault = Capacitor.getPlatform() === 'web' ? new BrowserVault(config) : new Vault(config);
+
+    this.vault.onConfigChanged((c) => {
+      console.log('updated vault config: ', c);
+     });
 
     this.vault.onLock(() => {
       this.ngZone.run(() => {
@@ -65,7 +73,7 @@ export class VaultService {
     });
 
     this.state.isLocked = await this.vault.isLocked();
-
+    this.state.canUseDimBiometrics = Capacitor.getPlatform() === 'android';
     this.state.privacyScreen =
       Capacitor.getPlatform() === 'web' ? false : await Device.isHideScreenOnBackgroundEnabled();
     this.state.canUseBiometrics = Capacitor.getPlatform() === 'web' ? false : await Device.isBiometricsEnabled();
@@ -92,9 +100,14 @@ export class VaultService {
     await this.vault.unlock();
   }
 
-  setPrivacyScreen(enabled: boolean) {
-    Device.setHideScreenOnBackground(enabled);
+  async setPrivacyScreen(enabled: boolean) {
+    await Device.setHideScreenOnBackground(enabled);
     this.state.privacyScreen = enabled;
+  }
+
+  async setDimBiometrics(enabled: boolean) {
+    await Device.setHideScreenOnBackground(this.state.privacyScreen, enabled);
+    this.state.dimBiometrics = enabled;
   }
 
   async setLockType() {
@@ -106,6 +119,11 @@ export class VaultService {
         type = VaultType.DeviceSecurity;
         deviceSecurityType = DeviceSecurityType.Biometrics;
         break;
+
+      case 'Both':
+          type = VaultType.DeviceSecurity;
+          deviceSecurityType = DeviceSecurityType.Both;
+          break;
 
       case 'SystemPasscode':
         type = VaultType.DeviceSecurity;

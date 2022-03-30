@@ -1,86 +1,112 @@
 <ion-header [translucent]="true">
   <ion-toolbar>
-    <ion-title> Blank </ion-title>
+    <ion-title> Getting Started - Identity Vault </ion-title>
   </ion-toolbar>
 </ion-header>
 
 <ion-content [fullscreen]="true">
   <ion-header collapse="condense">
     <ion-toolbar>
-      <ion-title size="large">Blank</ion-title>
+      <ion-title size="large">Getting Started - Identity Vault</ion-title>
     </ion-toolbar>
   </ion-header>
 
   <ion-list>
-    <ion-item>
-      <ion-label position="floating">Enter the "session" data</ion-label>
-      <ion-input [(ngModel)]="state.session"></ion-input>
-    </ion-item>
+    <ion-item-group>
+      <ion-item-divider>
+        <ion-label>Session Data</ion-label>
+      </ion-item-divider>
+      <ion-item>
+        <ion-label position="floating">Enter the "session" data</ion-label>
+        <ion-input [(ngModel)]="state.session"></ion-input>
+      </ion-item>
 
-    <ion-item>
-      <div style="flex: auto">
-        <ion-button expand="block" (click)="setSession(state.session)">Set Session Data</ion-button>
-      </div>
-    </ion-item>
+      <ion-item>
+        <div style="flex: auto">
+          <ion-button expand="block" (click)="setSession(state.session)">Set Session Data</ion-button>
+        </div>
+      </ion-item>
 
-    <ion-item>
-      <div style="flex: auto">
-        <ion-button expand="block" (click)="restoreSession()">Restore Session Data</ion-button>
-      </div>
-    </ion-item>
+      <ion-item>
+        <div style="flex: auto">
+          <ion-button expand="block" (click)="restoreSession()">Restore Session Data</ion-button>
+        </div>
+      </ion-item>
+    </ion-item-group>
+    <ion-item-group>
+      <ion-item-divider>
+        <ion-label>Vault Actions</ion-label>
+      </ion-item-divider>
+      <ion-item>
+        <div style="flex: auto">
+          <ion-button expand="block" (click)="lockVault()">Lock Vault</ion-button>
+        </div>
+      </ion-item>
 
-    <ion-item>
-      <div style="flex: auto">
-        <ion-button expand="block" (click)="lockVault()">Lock Vault</ion-button>
-      </div>
-    </ion-item>
+      <ion-item>
+        <div style="flex: auto">
+          <ion-button expand="block" (click)="unlockVault()">Unlock Vault</ion-button>
+        </div>
+      </ion-item>
+      </ion-item-group>
+        <ion-item-group>
+          <ion-item-divider>
+            <ion-label> Vault Locking Mechanism </ion-label>
+          </ion-item-divider>
+          <ion-item>
+            <ion-radio-group [(ngModel)]="state.lockType" (ionChange)="setLockType()">
+              <ion-item>
+                <ion-label>Do Not Lock</ion-label>
+                <ion-radio slot="end" value="NoLocking"></ion-radio>
+              </ion-item>
 
-    <ion-item>
-      <div style="flex: auto">
-        <ion-button expand="block" (click)="unlockVault()">Unlock Vault</ion-button>
-      </div>
-    </ion-item>
+              <ion-item>
+                <ion-label>Use Biometrics</ion-label>
+                <ion-radio slot="end" [disabled]="!state.canUseBiometrics" value="Biometrics"></ion-radio>
+              </ion-item>
 
-    <ion-item>
-      <ion-label>Use Privacy Screen</ion-label>
-      <ion-checkbox [(ngModel)]="state.privacyScreen" (ionChange)="setPrivacyScreen()"></ion-checkbox>
-    </ion-item>
+              <ion-item>
+                <ion-label class="ion-text-wrap">Use Both (Device will determine which to use)</ion-label>
+                <ion-radio slot="end" [disabled]="!state.canUseBiometrics" value="Both"></ion-radio>
+              </ion-item>
 
-    <ion-item>
-      <ion-radio-group [(ngModel)]="state.lockType" (ionChange)="setLockType()">
-        <ion-list-header>
-          <ion-label> Vault Locking Mechanism </ion-label>
-        </ion-list-header>
+              <ion-item>
+                <ion-label>Use System Passcode</ion-label>
+                <ion-radio slot="end" [disabled]="!state.canUsePasscode" value="SystemPasscode"></ion-radio>
+              </ion-item>
+            </ion-radio-group>
+          </ion-item>
+          </ion-item-group>
+          <ion-item-group>
+            <ion-item-divider>
+              <ion-label>Privacy Screen Settings</ion-label>
+            </ion-item-divider>
+            <ion-item>
+              <ion-label>Use Privacy Screen</ion-label>
+              <ion-checkbox slot="end" [(ngModel)]="state.privacyScreen" (ionChange)="setPrivacyScreen()"></ion-checkbox>
+            </ion-item>
 
-        <ion-item>
-          <ion-label>Do Not Lock</ion-label>
-          <ion-radio value="NoLocking"></ion-radio>
-        </ion-item>
-
-        <ion-item>
-          <ion-label>Use Biometrics</ion-label>
-          <ion-radio [disabled]="!state.canUseBiometrics" value="Biometrics"></ion-radio>
-        </ion-item>
-
-        <ion-item>
-          <ion-label>Use System Passcode</ion-label>
-          <ion-radio [disabled]="!state.canUsePasscode" value="SystemPasscode"></ion-radio>
-        </ion-item>
-      </ion-radio-group>
-    </ion-item>
-
-    <ion-item>
-      <div style="flex: auto">
-        <ion-button expand="block" (click)="clearVault()">Clear Vault</ion-button>
-      </div>
-    </ion-item>
-
-    <ion-item>
-      <ion-label>
-        <div>Session Data: {{ state.session }}</div>
-        <div>Vault is locked: {{ state.isLocked }}</div>
-        <div>Vault is empty: {{ state.isEmpty }}</div>
-      </ion-label>
-    </ion-item>
+            <ion-item>
+              <ion-label class="ion-text-wrap">Dim Background During Biometric Prompt (Android Only)</ion-label>
+              <ion-checkbox slot="end" [disabled]="!state.canUseDimBiometrics"  [(ngModel)]="state.dimBiometrics" (ionChange)="setDimBiometrics()"></ion-checkbox>
+            </ion-item>
+            </ion-item-group>
+          <ion-item-group>
+            <ion-item-divider>
+              <ion-label>Vault Status</ion-label>
+            </ion-item-divider>
+            <ion-item>
+              <ion-label>
+                <div>Session Data: {{ state.session }}</div>
+                <div>Vault is locked: {{ state.isLocked }}</div>
+                <div>Vault is empty: {{ state.isEmpty }}</div>
+              </ion-label>
+            </ion-item>
+            <ion-item>
+              <div style="flex: auto">
+                <ion-button expand="block" color="danger" (click)="clearVault()">Clear Vault</ion-button>
+              </div>
+            </ion-item>
+            </ion-item-group>
   </ion-list>
 </ion-content>

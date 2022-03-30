@@ -33,8 +33,13 @@ export class HomePage {
     this.vaultService.setLockType();
   }
 
-  setPrivacyScreen() {
-    this.vaultService.setPrivacyScreen(this.state.privacyScreen);
+  async setDimBiometrics() {
+    await this.vaultService.setDimBiometrics(this.state.dimBiometrics);
+  }
+
+
+  async setPrivacyScreen() {
+    await this.vaultService.setPrivacyScreen(this.state.privacyScreen);
   }
 
   clearVault() {
