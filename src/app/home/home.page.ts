@@ -18,7 +18,11 @@ export class HomePage {
   }
 
   async restoreSession() {
-    await this.vaultService.restoreSession();
+    try {
+      await this.vaultService.restoreSession();
+    } catch (err) {
+      alert(JSON.stringify(err));
+    }
   }
 
   lockVault() {
