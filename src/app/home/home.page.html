@@ -66,6 +66,11 @@
           <ion-label>Use System Passcode</ion-label>
           <ion-radio [disabled]="!state.canUsePasscode" value="SystemPasscode"></ion-radio>
         </ion-item>
+
+        <ion-item>
+          <ion-label>Use Both</ion-label>
+          <ion-radio [disabled]="!state.canUsePasscode" value="Both"></ion-radio>
+        </ion-item>
       </ion-radio-group>
     </ion-item>
 

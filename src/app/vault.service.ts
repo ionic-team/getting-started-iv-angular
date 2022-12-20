@@ -25,7 +25,7 @@ export interface VaultServiceState {
   session: string;
   isLocked: boolean;
   privacyScreen: boolean;
-  lockType: 'NoLocking' | 'Biometrics' | 'SystemPasscode';
+  lockType: 'NoLocking' | 'Biometrics' | 'SystemPasscode' | 'Both';
   canUseBiometrics: boolean;
   canUsePasscode: boolean;
   isEmpty: boolean;
@@ -45,7 +45,7 @@ export class VaultService {
 
   vault: Vault | BrowserVault;
 
-  constructor(private ngZone: NgZone, private platform: Platform) { }
+  constructor(private ngZone: NgZone, private platform: Platform) {}
 
   async init() {
     await this.platform.ready(); // This is required only for Cordova
@@ -110,6 +110,11 @@ export class VaultService {
       case 'SystemPasscode':
         type = VaultType.DeviceSecurity;
         deviceSecurityType = DeviceSecurityType.SystemPasscode;
+        break;
+
+      case 'Both':
+        type = VaultType.DeviceSecurity;
+        deviceSecurityType = DeviceSecurityType.Both;
         break;
 
       default:
