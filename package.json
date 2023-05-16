@@ -1,15 +1,21 @@
 {
   "name": "getting-started-iv-angular",
   "version": "0.0.1",
-  "author": "Ionic Framework",
-  "homepage": "https://ionicframework.com/",
+  "description": "Identity Vault Getting Started Guide",
+  "author": {
+    "name": "Ionic Customer Success Team",
+  "email": "support@ionic.io",
+  "url": "https://ionicframework.com/"
+  },
   "scripts": {
+    "build": "ng build && cap copy",
+    "e2e": "ng e2e",
+    "lint": "ng lint",
     "ng": "ng",
     "start": "ng serve",
-    "build": "ng build && cap copy",
-    "test": "ng test",
-    "lint": "ng lint",
-    "e2e": "ng e2e"
+    "test": "ng test --no-watch",
+    "test:debug": "ng test --browsers=Chrome",
+    "test:dev": "ng test"
   },
   "private": true,
   "dependencies": {
@@ -68,6 +74,5 @@
     "ts-node": "~10.9.1",
     "typescript": "~5.0.4"
   },
-  "description": "An Ionic project",
   "prettier": "@ionic/prettier-config"
 }
