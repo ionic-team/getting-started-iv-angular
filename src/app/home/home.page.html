@@ -13,8 +13,11 @@
 
   <ion-list>
     <ion-item>
-      <ion-label position="floating">Enter the "session" data</ion-label>
-      <ion-input [(ngModel)]="state.session"></ion-input>
+      <ion-input
+        label="Enter the &ldquo;session&rdquo; data"
+        label-placement="floating"
+        [(ngModel)]="state.session"
+      ></ion-input>
     </ion-item>
 
     <ion-item>
@@ -42,8 +45,7 @@
     </ion-item>
 
     <ion-item>
-      <ion-label>Use Privacy Screen</ion-label>
-      <ion-checkbox [(ngModel)]="state.privacyScreen" (ionChange)="setPrivacyScreen()"></ion-checkbox>
+      <ion-checkbox [(ngModel)]="state.privacyScreen" (ionChange)="setPrivacyScreen()">Use Privacy Screen</ion-checkbox>
     </ion-item>
 
     <ion-item>
@@ -53,23 +55,19 @@
         </ion-list-header>
 
         <ion-item>
-          <ion-label>Do Not Lock</ion-label>
-          <ion-radio value="NoLocking"></ion-radio>
+          <ion-radio value="NoLocking">Do not Lock</ion-radio>
         </ion-item>
 
         <ion-item>
-          <ion-label>Use Biometrics</ion-label>
-          <ion-radio [disabled]="!state.canUseBiometrics" value="Biometrics"></ion-radio>
+          <ion-radio [disabled]="!state.canUseBiometrics" value="Biometrics">Use Biometrics</ion-radio>
         </ion-item>
 
         <ion-item>
-          <ion-label>Use System Passcode</ion-label>
-          <ion-radio [disabled]="!state.canUsePasscode" value="SystemPasscode"></ion-radio>
+          <ion-radio [disabled]="!state.canUsePasscode" value="SystemPasscode">Use System Passcode</ion-radio>
         </ion-item>
 
         <ion-item>
-          <ion-label>Use Both</ion-label>
-          <ion-radio [disabled]="!state.canUsePasscode" value="Both"></ion-radio>
+          <ion-radio [disabled]="!state.canUsePasscode" value="Both">Use Both</ion-radio>
         </ion-item>
       </ion-radio-group>
     </ion-item>
