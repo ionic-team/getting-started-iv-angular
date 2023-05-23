@@ -19,7 +19,7 @@ The work done in this tutorial will be concentrated on a couple of files:
 The first step to take is to generate our application:
 
 ```bash
-ionic start getting-started-iv-angular blank --type=angular --capacitor
+ionic start getting-started-iv-angular blank --type=angular-standalone --capacitor
 ```
 
 Now that the application has been generated let's add the iOS and Android platforms.
@@ -216,26 +216,28 @@ this.vault = Capacitor.getPlatform() === 'web' ? new BrowserVault(config) : new 
 The `BrowserVault` class allows developers to use their normal web-based development workflow. It does **not** provide locking or security functionality.
 :::
 
-We still need to initialize the `VaultService`. We will do that in `src/app/app.module.ts` via Angular's `APP_INITIALIZER` depencency injection token:
+We need to initialize the `VaultService`. We will do that in `src/main.ts` via Angular's `APP_INITIALIZER` depencency injection token:
 
 ```typescript
-import { APP_INITIALIZER, NgModule } from '@angular/core';
-import { BrowserModule } from '@angular/platform-browser';
-import { RouteReuseStrategy } from '@angular/router';
+import { APP_INITIALIZER, enableProdMode, importProvidersFrom } from '@angular/core';
+import { bootstrapApplication } from '@angular/platform-browser';
+import { RouteReuseStrategy, provideRouter } from '@angular/router';
 import { IonicModule, IonicRouteStrategy } from '@ionic/angular';
-import { AppRoutingModule } from './app-routing.module';
-import { AppComponent } from './app.component';
-import { VaultService } from './vault.service';
+import { routes } from './app/app.routes';
+import { AppComponent } from './app/app.component';
+import { environment } from './environments/environment';
+import { VaultService } from './app/vault.service';
 
 const appInitFactory =
   (vaultService: VaultService): (() => Promise<void>) =>
   () =>
     vaultService.init();
 
-@NgModule({
-  declarations: [AppComponent],
-  entryComponents: [],
-  imports: [BrowserModule, IonicModule.forRoot(), AppRoutingModule],
+if (environment.production) {
+  enableProdMode();
+}
+
+bootstrapApplication(AppComponent, {
   providers: [
     { provide: RouteReuseStrategy, useClass: IonicRouteStrategy },
     {
@@ -244,13 +246,13 @@ const appInitFactory =
       deps: [VaultService],
       multi: true,
     },
+    importProvidersFrom(IonicModule.forRoot({})),
+    provideRouter(routes),
   ],
-  bootstrap: [AppComponent],
-})
-export class AppModule {}
+});
 ```
 
-Now that we have the vault in place and properly initialized, let's switch over to `src/home/home.page.ts` and implement some simple interactions with the vault. Here is a snapshot of what we will change:
+Now that we have the vault in place and properly initialized, let's switch over to `src/home/home.page.html` and implement some simple interactions with the vault. Here is a snapshot of what we will change:
 
 Update the template to match the following code:
 
@@ -270,20 +272,23 @@ Update the template to match the following code:
 
   <ion-list>
     <ion-item>
-      <ion-label position="floating">Enter the "session" data</ion-label>
-      <ion-input [(ngModel)]="state.session"></ion-input>
+      <ion-input
+        label="Enter the &ldquo;session&rdquo; data"
+        label-placement="floating"
+        [(ngModel)]="state.session"
+      ></ion-input>
     </ion-item>
 
     <ion-item>
-      <ion-label>
+      <div style="flex: auto">
         <ion-button expand="block" (click)="setSession(state.session)"> Set Session Data </ion-button>
-      </ion-label>
+      </div>
     </ion-item>
 
     <ion-item>
-      <ion-label>
+      <div style="flex: auto">
         <ion-button expand="block" (click)="restoreSession()"> Restore Session Data </ion-button>
-      </ion-label>
+      </div>
     </ion-item>
 
     <ion-item>
@@ -305,6 +310,8 @@ import { VaultService, VaultServiceState } from '../vault.service';
   selector: 'app-home',
   templateUrl: 'home.page.html',
   styleUrls: ['home.page.scss'],
+  standalone: true,
+  imports: [CommonModule, FormsModule, IonicModule],
 })
 export class HomePage {
   public state: VaultServiceState;
@@ -349,15 +356,15 @@ We can then add a couple of buttons to our `HomePage` component:
 
 ```html
 <ion-item>
-  <ion-label>
+  <div style="flex: auto">
     <ion-button expand="block" (click)="lockVault()">Lock Vault</ion-button>
-  </ion-label>
+  </div>
 </ion-item>
 
 <ion-item>
-  <ion-label>
+  <div style="flex: auto">
     <ion-button expand="block" (click)="unlockVault()">Unlock Vault</ion-button>
-  </ion-label>
+  </div>
 </ion-item>
 ```
 
@@ -495,8 +502,7 @@ Finally, we can add the checkbox to the `HomePage` component:
 
 ```html
 <ion-item>
-  <ion-label>Use Privacy Screen</ion-label>
-  <ion-checkbox [(ngModel)]="state.privacyScreen" (ionChange)="setPrivacyScreen()"></ion-checkbox>
+  <ion-checkbox [(ngModel)]="state.privacyScreen" (ionChange)="setPrivacyScreen()">Use Privacy Screen</ion-checkbox>
 </ion-item>
 ```
 
@@ -602,18 +608,15 @@ Finally, add a group of radio buttons to the `HomePage` component that control t
     </ion-list-header>
 
     <ion-item>
-      <ion-label>Do Not Lock</ion-label>
-      <ion-radio value="NoLocking"></ion-radio>
+      <ion-radio value="NoLocking">Do Not Lock</ion-radio>
     </ion-item>
 
     <ion-item>
-      <ion-label>Use Biometrics</ion-label>
-      <ion-radio [disabled]="!state.canUseBiometrics" value="Biometrics"></ion-radio>
+      <ion-radio [disabled]="!state.canUseBiometrics" value="Biometrics">Use Biometrics</ion-radio>
     </ion-item>
 
     <ion-item>
-      <ion-label>Use System Passcode</ion-label>
-      <ion-radio [disabled]="!state.canUsePasscode" value="SystemPasscode"></ion-radio>
+      <ion-radio [disabled]="!state.canUsePasscode" value="SystemPasscode">Use System Passcode</ion-radio>
     </ion-item>
   </ion-radio-group>
 </ion-item>
